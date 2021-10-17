@@ -11,6 +11,8 @@ public class PlayerMovement : MonoBehaviour
 
     private Vector2 _lastDir;
 
+    private bool isFacingRight = true;
+
     void Start()
     {
         _rb = GetComponent<Rigidbody2D>();
@@ -24,16 +26,49 @@ public class PlayerMovement : MonoBehaviour
         if ((Mathf.Abs(input.x) != Mathf.Abs(input.y)) && input != _lastDir) 
         {
             _lastDir = input;
+            Flip();
             cr = StartCoroutine(MovePlayer(input));
         }
 
+    }
+    private void Flip()
+    {
+        var scale = transform.localScale;
+        if (_lastDir.x < 0)
+        {
+            scale.x = -1;
+            scale.y = 1;
+            transform.localScale = scale;
+            isFacingRight = !isFacingRight;
+        } 
+        else 
+        if (_lastDir.x > 0)
+        {
+            scale.x = 1;
+            scale.y = 1;
+            transform.localScale = scale;
+            isFacingRight = !isFacingRight;
+        }
+        else 
+        if (_lastDir.y > 0)
+        {
+            scale.y = 1;
+            transform.localScale = scale;
+        } 
+        else 
+        if (_lastDir.y < 0)
+        {
+            scale.y = -1;
+            transform.localScale = scale;
+        }
+  
     }
 
     IEnumerator MovePlayer(Vector2 dir)
     {
         _rb.AddForce(dir * _speed, ForceMode2D.Impulse);
 
-        yield return new WaitForEndOfFrame();
+        //yield return new WaitForEndOfFrame();
 
         if (_rb.velocity != Vector2.zero)
             _isMoving = true; 
