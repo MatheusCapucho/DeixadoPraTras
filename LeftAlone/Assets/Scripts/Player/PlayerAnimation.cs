@@ -15,9 +15,6 @@ public class PlayerAnimation : MonoBehaviour
     }
     void Update()
     {
-        if (rb.velocity == Vector2.zero)
-            anim.SetTrigger("Idle");
-        else
         if (rb.velocity.x != 0)       
             anim.SetTrigger("Horizontal");
         else
