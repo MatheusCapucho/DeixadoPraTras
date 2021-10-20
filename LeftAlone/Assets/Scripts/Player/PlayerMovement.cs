@@ -15,6 +15,11 @@ public class PlayerMovement : MonoBehaviour
 
     private bool isFacingRight = true;
 
+    private void Awake()
+    {
+        Vector3 startPos = GameObject.Find("StartLevel").transform.position;
+        this.gameObject.transform.position = startPos;
+    }
 
     void Start()
     {
@@ -118,6 +123,7 @@ public class PlayerMovement : MonoBehaviour
         else 
             _isMoving = false;
         int aux = 0;
+        
         while (_isMoving)
         {
             yield return new WaitForSeconds(.1f);
@@ -125,19 +131,17 @@ public class PlayerMovement : MonoBehaviour
             if (aux > 15)
                 _isMoving = false;
         }
-
-        Rotation(dir);
-        anim.SetTrigger("Idle");
-
         cr = null;
         yield return null;
     }
 
     private void OnCollisionEnter2D(Collision2D other)
     {
-        if (other.gameObject.CompareTag("Wall"))
+        if (other.gameObject.CompareTag("Wall")) {
+            Rotation(_lastDir);
             _isMoving = false;
-
+            anim.SetTrigger("Idle");
+        }
     }
     private void OnCollisionExit2D(Collision2D collision)
     {
