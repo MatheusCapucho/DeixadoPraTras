@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Portal : MonoBehaviour
 {
@@ -11,10 +12,13 @@ public class Portal : MonoBehaviour
     private float nextPortalTrigger = 0f;
     [SerializeField] private float cooldown = 1f;
 
+    private CameraControl cameraControl;
+
 
     void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player");
+        cameraControl = Camera.main.GetComponent<CameraControl>();
 
         if (maxPortals % 2 == 1)
             otherPortal = GameObject.Find("Portal0");
@@ -25,6 +29,22 @@ public class Portal : MonoBehaviour
 
         maxPortals++;
     }
+
+    public void MovePortal(bool toRight)
+    {
+        if (toRight)
+        {
+            float distance = cameraControl.xBounds[EndLevel.levelCount] - cameraControl.xBounds[EndLevel.levelCount - 1];
+            this.gameObject.transform.position += new Vector3(distance, 0, 0);
+        }
+        else
+        {
+            float distance = cameraControl.xBounds[EndLevel.levelCount + 1] - cameraControl.xBounds[EndLevel.levelCount];
+            this.gameObject.transform.position -= new Vector3(distance, 0, 0);
+        }
+    }
+
+    
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (otherPortal == null)
@@ -41,6 +61,10 @@ public class Portal : MonoBehaviour
         }
     }
 
+    public void StartCr()
+    {
+        StartCoroutine(Config());
+    }
     IEnumerator Config()
     {     
         Collider2D col = GetComponent<Collider2D>();

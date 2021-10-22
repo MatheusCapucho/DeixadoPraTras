@@ -13,8 +13,10 @@ public class PortalLogic : MonoBehaviour
     private GameObject _player;
     private GameObject[] _portal = new GameObject[2];
 
-    private float cooldown = 2f;
+    private float cooldown = 1.4f;
     private float nextTime = 0f;
+
+    [SerializeField] private CameraControl cameraControl;
 
     void Start()
     {
@@ -61,4 +63,5 @@ public class PortalLogic : MonoBehaviour
             _portal[1].GetComponent<Portal>().ChangePortalReference(_portal[0]);
 
     }
+
 }

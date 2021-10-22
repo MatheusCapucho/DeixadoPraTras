@@ -7,13 +7,16 @@ public class EndLevel : MonoBehaviour
 {
     private static int currentScene;
     [SerializeField] private bool isEndLevel;
+    [SerializeField] private bool isEndScene;
+    [SerializeField] private CameraControl cameraControl;
+    public static int levelCount = 0;
 
     private void Awake()
     {
         if(isEndLevel)
-            StartCoroutine(Config(3));
+            StartCoroutine(Config(1));
         else
-            StartCoroutine(Config(5));
+            StartCoroutine(Config(3));
     }
 
     private void Start()
@@ -28,20 +31,48 @@ public class EndLevel : MonoBehaviour
         
         yield return null;
     }
-
-    private void OnTriggerExit2D(Collider2D other)
+    public void StartCr()
     {
-
+        StartCoroutine(Config(3));
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.gameObject.CompareTag("Player"))
         {
-            if (isEndLevel)
-                SceneManager.LoadScene(++currentScene);
-            else if (SceneManager.GetActiveScene().name != "Level0")
-                SceneManager.LoadScene(--currentScene);
+            GameObject[] portals = GameObject.FindGameObjectsWithTag("Portal");
+
+            if (!isEndScene)
+            {
+                if (isEndLevel)
+                {
+                    cameraControl.MoveCamera(++levelCount);
+                    other.GetComponent<PlayerMovement>().startPos[levelCount].GetComponent<Collider2D>().enabled = false;
+                    other.gameObject.transform.position = other.GetComponent<PlayerMovement>().startPos[levelCount].transform.position;
+                    other.GetComponent<PlayerMovement>().startPos[levelCount].GetComponent<EndLevel>().StartCr();
+                    foreach (var portal in portals)
+                    {
+                        portal.GetComponent<Portal>().MovePortal(true);
+                    }
+                    
+
+                }
+                else if (levelCount != 0)
+                {
+                    cameraControl.MoveCamera(--levelCount);
+                    other.GetComponent<PlayerMovement>().startPos[levelCount].GetComponent<Collider2D>().enabled = false;
+                    other.gameObject.transform.position = other.GetComponent<PlayerMovement>().startPos[levelCount].transform.position;
+                    other.GetComponent<PlayerMovement>().startPos[levelCount].GetComponent<EndLevel>().StartCr();
+                    other.gameObject.GetComponent<PlayerMovement>()._isMoving = false;
+                    foreach (var portal in portals)
+                    {
+                        portal.GetComponent<Portal>().MovePortal(false);
+                    }
+                }
+            } else
+            {
+                SceneManager.LoadScene("TheEnd");
+            }
         }        
 
     }

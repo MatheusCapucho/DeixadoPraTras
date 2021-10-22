@@ -5,7 +5,7 @@ using UnityEngine;
 public class PlayerMovement : MonoBehaviour
 {
     [SerializeField] private float _speed = 1f;
-    private bool _isMoving = false;
+    public bool _isMoving = false;
     private Rigidbody2D _rb;
     private Coroutine cr;
     private Animator anim;
@@ -13,12 +13,13 @@ public class PlayerMovement : MonoBehaviour
 
     private Vector2 _lastDir;
 
-    private bool isFacingRight = true;
+    public GameObject[] startPos;
+
+   
 
     private void Awake()
     {
-        Vector3 startPos = GameObject.Find("StartLevel").transform.position;
-        this.gameObject.transform.position = startPos;
+        this.gameObject.transform.position = startPos[0].transform.position;
     }
 
     void Start()
@@ -50,8 +51,7 @@ public class PlayerMovement : MonoBehaviour
         {
             scale.x = -1;
             scale.y = 1;
-            transform.localScale = scale;
-            isFacingRight = false;
+            transform.localScale = scale;      
             anim.SetTrigger("Horizontal");
         } 
         else 
@@ -60,7 +60,6 @@ public class PlayerMovement : MonoBehaviour
             scale.x = 1;
             scale.y = 1;
             transform.localScale = scale;
-            isFacingRight = true;
             anim.SetTrigger("Horizontal");
         }
         else 
